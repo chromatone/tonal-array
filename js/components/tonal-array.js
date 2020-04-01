@@ -94,7 +94,6 @@ export default {
 	components: {
 		'chord-trigger':chordTrigger,
 		'circle-note':circleNote,
-		vueSlider: window["vue-slider-component"]
 	},
 	template: `
 		<svg id="tonal-array" viewBox="-80 -110 1040 770">
@@ -167,7 +166,18 @@ export default {
 			</g>
 
 		</svg>`,
-  props: ['steps','root'],
+  props: {
+		root: {
+			type:Number,
+			default:'0',
+		},
+		scale: {
+			type:Object,
+			default() {
+				return Chroma.Scales.major
+			}
+		}
+	},
 	data() {
     return {
       notes: Chroma.Notes,
@@ -177,7 +187,6 @@ export default {
       colNum:12,
       rows:[0,9,5,2,10],
       bgRows:[4,0,9,5,2,10,7],
-      scale: Chroma.Scales.major,
       chords:[
         [0,3,7],
         [0,3,8],
