@@ -1,5 +1,5 @@
-import Chroma from './Scales.js'
-import Synth from './Synth.js'
+import Chroma from '../Scales.js'
+import Synth from '../Synth.js'
 
 const circleNote = {
 	template:`
@@ -162,7 +162,7 @@ export default {
 							:root="root"
 							:note="note"
 							:r="r"/>
-							
+
 				</g>
 			</g>
 
