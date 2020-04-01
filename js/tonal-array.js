@@ -2,20 +2,28 @@ import Chroma from './Scales.js'
 import Synth from './Synth.js'
 
 const circleNote = {
-	template:`<g><circle
-	@mousedown.stop.prevent="playNote"
-	@touchstart.stop.prevent="playNote"
-	@mouseup.stop.prevent="stopNote"
-	@mouseleave.stop.prevent="stopNote"
-	@touchend.stop.prevent="stopNote"
-	:r="r" :cx="0" :cy="0"
-  :class="{deactivated:!active,root:root==note.pitch}"
-	class="note-circle"
-  stroke-width="2"
-	:fill="note.color"></circle>
+	template:`
+		<g>
+			<circle
+				@mousedown.stop.prevent="playNote"
+				@touchstart.stop.prevent="playNote"
+				@mouseup.stop.prevent="stopNote"
+				@mouseleave.stop.prevent="stopNote"
+				@touchend.stop.prevent="stopNote"
+				:r="r" :cx="0" :cy="0"
+			  :class="{deactivated:!active,root:root==note.pitch}"
+				class="note-circle"
+			  stroke-width="2"
+				:fill="note.color"/>
 
-	<text text-anchor="middle" class="note-name" fill="white"
-	:x="0" :y="8">{{note.name}}</text></g>`,
+			<text
+				text-anchor="middle"
+				class="note-name"
+				fill="white"
+				:x="0"
+				:y="8">{{note.name}}</text>
+		</g>
+	`,
 	props:['note','r','active','root'],
 	data() {
 		return {
@@ -41,17 +49,19 @@ const circleNote = {
 //Chord-trigger
 
 const chordTrigger ={
-	template:`<polygon
-	:transform="'rotate('+60*p+')'"
-	@mousedown.stop.prevent="playChord"
-	@touchstart.stop.prevent="playChord"
-	@mouseleave.stop.prevent="stopChord"
-	@mouseup.stop.prevent="stopChord"
-	@touchend.stop.prevent="stopChord"
-	class="chord-trigger"
-  :class="{deactivated:!active}"
-	:fill="note.color"
-	points="0,0 80,0 80,46.188 40,69.28"/>`,
+	template:`
+		<polygon
+			:transform="'rotate('+60*p+')'"
+			@mousedown.stop.prevent="playChord"
+			@touchstart.stop.prevent="playChord"
+			@mouseleave.stop.prevent="stopChord"
+			@mouseup.stop.prevent="stopChord"
+			@touchend.stop.prevent="stopChord"
+			class="chord-trigger"
+		  :class="{deactivated:!active}"
+			:fill="note.color"
+			points="0,0 80,0 80,46.188 40,69.28"/>
+	`,
 	props: ['note','p', 'chord','activeSteps'],
 	methods: {
 		playChord() {
@@ -86,35 +96,73 @@ export default {
 		'circle-note':circleNote,
 		vueSlider: window["vue-slider-component"]
 	},
-	template: `<svg id="tonal-array" viewBox="-80 -110 1040 770">
-  <clipPath id="grid-mask">
-    <rect x="-80" y="-110" width="1040" height="770" ry="20" rx="20"></rect>
-  </clipPath>
+	template: `
+		<svg id="tonal-array" viewBox="-80 -110 1040 770">
+
+		  <clipPath id="grid-mask">
+		    <rect x="-80" y="-110" width="1040" height="770" ry="20" rx="20"></rect>
+		  </clipPath>
 
 			<g clip-path="url(#grid-mask)" v-for="(shift,n) in bgRows">
-				<g v-for="(note, i) in rotate(fifths,shift-1).splice(0,7)" :transform="'translate('+ ((i-1)*2*dx + ((n+1)%2)*dx) +','+(n-1)*dy+')'">
-					<polygon class="chord-triangle"
-:class="{deactivated:hasMinor(note.pitch)}"
-:fill="note.color" points="0,0 160,0 80,138.56"></polygon>
-					<polygon class="chord-triangle major"
-:class="{deactivated:hasMajor(note.pitch)}"
-:fill="note.color" points="0,0 160,0 80,-138.56"></polygon>
-					<text text-anchor="middle" class="chord-name" fill="white" :x="80" :y="-40">
-{{note.name}}
-</text>
-					<text text-anchor="middle" class="chord-name" fill="white" :x="80" :y="55">{{note.name}}m</text>
+
+				<g
+					v-for="(note, i) in rotate(fifths,shift-1).splice(0,7)"
+					:transform="'translate('+ ((i-1)*2*dx + ((n+1)%2)*dx) +','+(n-1)*dy+')'">
+
+					<polygon
+						class="chord-triangle"
+						:class="{deactivated:hasMinor(note.pitch)}"
+						:fill="note.color"
+						points="0,0 160,0 80,138.56"/>
+
+					<polygon
+						class="chord-triangle major"
+						:class="{deactivated:hasMajor(note.pitch)}"
+						:fill="note.color"
+						points="0,0 160,0 80,-138.56"/>
+
+					<text text-anchor="middle"
+						class="chord-name"
+						fill="white"
+						:x="80"
+						:y="-40">
+					{{note.name}}
+					</text>
+
+					<text
+						text-anchor="middle"
+						class="chord-name"
+						fill="white"
+						:x="80" :y="55">{{note.name}}m</text>
+
 				</g>
 			</g>
 
 			<g v-for="(shift,n) in rows">
-				<g v-for="(note, i) in rotate(fifths,shift).splice(0,7)" :transform="'translate('+ (i*2*dx + (n%2)*dx) +','+n*dy+')'">
-					<chord-trigger v-for="(chord, p) in chords" :key="p" :activeSteps="activeSteps" :chord="chord" :p="p" :note="note"></chord-trigger>
+
+				<g v-for="(note, i) in rotate(fifths,shift).splice(0,7)"
+					:transform="'translate('+ (i*2*dx + (n%2)*dx) +','+n*dy+')'">
+
+					<chord-trigger v-for="(chord, p) in chords"
+						 :key="p"
+						 :activeSteps="activeSteps"
+						 :chord="chord"
+						 :p="p"
+						 :note="note"/>
+
 				</g>
 			</g>
 
 			<g v-for="(shift,n) in rows">
-				<g v-for="(note, i) in rotate(fifths,shift).splice(0,6)" :transform="'translate('+ (i*2*dx + (n%2)*dx) +','+n*dy+')'">
-					<circle-note :active="activeSteps[note.pitch]" :root="root" :note="note" :r="r"></circle-note>
+				<g v-for="(note, i) in rotate(fifths,shift).splice(0,6)"
+					 :transform="'translate('+ (i*2*dx + (n%2)*dx) +','+n*dy+')'">
+
+						<circle-note
+							:active="activeSteps[note.pitch]"
+							:root="root"
+							:note="note"
+							:r="r"/>
+							
 				</g>
 			</g>
 
